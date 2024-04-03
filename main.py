@@ -1,7 +1,7 @@
 import speech_recognition as sr
 import os
 import webbrowser
-import openai
+from openai import OpenAI
 from config import apikey
 import datetime
 import random
@@ -13,10 +13,11 @@ chatStr = ""
 def chat(query):
     global chatStr
     print(chatStr)
-    openai.api_key = apikey
+    # openai.api_key = apikey
     chatStr += f"Harry: {query}\n Jarvis: "
-    
-    response = openai.migrate.create(
+    client = OpenAI()
+
+    response = client.chat.completions.create(
         engine="text-davinci-003",
         prompt= chatStr,
         max_tokens=256,
@@ -36,7 +37,7 @@ def chat(query):
 def ai(prompt):
     openai.api_key = apikey
     text = f"OpenAI response for Prompt: {prompt} \n *************************\n\n"
-
+    client = OpenAI()
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
@@ -63,7 +64,7 @@ def say(text):
 def takeCommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        r.pause_threshold =  0.6
+        r.pause_threshold =  0.3
         audio = r.listen(source)
         try:
             print("Recognizing...")
